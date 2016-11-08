@@ -22,6 +22,9 @@ names(daily.steps) <- c("Date", "steps")
 mean.daily.steps <- mean(total.steps, na.rm = TRUE)
 median.daily.steps <- median(total.steps, na.rm = TRUE)
 
+#mean.daily.steps:`r mean.daily.steps`
+#median.daily.steps:`r median.daily.steps` 
+
 #Make a histogram of the total number of steps taken each day
 hist(daily.steps$steps, breaks = 11,
      xlab = "number of steps per day",
@@ -42,8 +45,16 @@ activity.interval.plot <- ggplot(data = activity.interval, mapping = aes(x = int
     ggtitle("Average Number of Steps Taken by Interval")
 activity.interval.plot
 
+#Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+max.steps = activity.interval[activity.interval$mean_steps==which.max(activity.interval$mean_steps)]
+ 
+
 ## Imputing missing values
 
+#Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
+#missing.days <- is.na(activity.data$steps)
+present.days <- na.omit(activity.data$steps)
+missing.days <- length(activity.data$steps) - length(present.days)
 
 ## Are there differences in activity patterns between weekdays and weekends?
 

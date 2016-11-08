@@ -38,7 +38,7 @@ legend(x = "topright", legend = c("mean", "median"), col = c("red", "blue"), bty
 
 
 ## What is the average daily activity pattern?
-```{r seriesplot_activitypattern, fig.height=4,fig.width=8}
+```{r timeseriesplot_activitypattern, fig.height=4,fig.width=8}
 activity.interval <- activity.data %>% group_by(interval) %>% summarise(mean_steps = mean(steps, na.rm = TRUE))
 ```
 
