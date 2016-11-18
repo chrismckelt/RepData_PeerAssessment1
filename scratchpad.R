@@ -55,17 +55,10 @@ missing.days <- length(activity.data$steps) - length(present.days)
 #strategy for filling in missing data (just replace with mean)
 activity.data$steps[is.na(activity.data$steps)] <- mean.daily.steps
 #Create a new dataset that is equal to the original dataset but with the missing data filled in.
-strategy <- function(x) { if (is.na(x)) mean.daily.steps else x)}
-activity.data.no.na <- activity.data
-for (i in seq(nrow(activity.data.no.na))) {
-    if (is.na(data[i, "steps"])) {
-        data$steps_revised[i] <- data[i, "average_steps"]
-    }
-    else {
-        data$steps_revised[i] <- data[i, "steps"]
-    }
+strategy <- function(x) { if (is.na(x)) {mean.daily.steps} else {x})}
+activity.data.no.na <- apply(activity.data, FUN = strategy)
 
- 
+
 
 #Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
@@ -81,13 +74,12 @@ mean.daily.steps.no.na <- mean(total.steps.no.na, na.rm = TRUE)
 median.daily.steps.no.na <- median(total.steps.no.na, na.rm = TRUE)
 
 
-
 hist(daily.steps.no.na$steps, breaks = 11,
-     xlab = "number of steps per day 2",
-     main = "Histogram of total steps per day 2")
-abline(v = daily.steps.no.na, col = "red", lwd = 1)
-abline(v = median.daily.steps.no.na, col = "blue", lwd = 1)
-legend(x = "topright", legend = c("mean", "median"), col = c("red", "blue"), bty = "n", lwd = 3)
+    xlab = "number of steps per day 2",
+    main = "Histogram of total steps per day 2")
+    abline(v = daily.steps.no.na, col = "red", lwd = 1)
+    abline(v = median.daily.steps.no.na, col = "blue", lwd = 1)
+    legend(x = "topright", legend = c("mean", "median"), col = c("red", "blue"), bty = "n", lwd = 3)
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
