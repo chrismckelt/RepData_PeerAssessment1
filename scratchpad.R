@@ -55,10 +55,11 @@ missing.days <- length(activity.data$steps) - length(present.days)
 #strategy for filling in missing data (just replace with mean)
 activity.data$steps[is.na(activity.data$steps)] <- mean.daily.steps
 #Create a new dataset that is equal to the original dataset but with the missing data filled in.
-strategy <- function(x) { if (is.na(x)) {mean.daily.steps} else {x})}
-activity.data.no.na <- apply(activity.data, FUN = strategy)
+strategy <- function(x) { ifelse(is.na(x), mean.daily.steps, x) }
+    
+activity.data.no.na <- as.data.frame(lapply(activity.data, FUN = strategy))
 
-
+ok <- activity.data.no.na[is.na((activity.data.no.na$steps))]
 
 #Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
