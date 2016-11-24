@@ -89,13 +89,11 @@ activity.data$day.type <- "weekday"
 activity.data$day.type[isWeekend(activity.data$date)] <- "weekend"
 activity.data$day.type <- as.factor(activity.data$day.type)
 
-##  Calculate average steps of each 5-minutes interval for weekdays and weekend
-weekend <- activity.data[which(activity.data$day.type == "weekend"),]
-weekday <- activity.data[which(activity.data$day.type == "weekday"),]
-
 #Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). 
-pattern <- activity.data %>% group_by(interval, date, day.type) %>% summarise(mean_steps = mean(steps))
+pattern <- aggregate(steps ~ interval + day.type, data = activity.data, mean)
+library(lattice)
+xyplot(steps ~ interval | day.type, pattern, type = "l", layout = c(1, 2), xlab = "Interval", ylab = "Number of steps")
 
-ggplot(pattern, aes(interval, mean_steps)) + geom_line(aes(colour = day)) + facet_grid(day ~ .) +
-    ggtitle("Average Daily Activity Per 5-Min Interval (Weekday vs Weekend)") + xlab("interval (24-hours)") +
-    ylab("Average Number of Steps Taken")
+##  Calculate average steps of each 5-minutes interval for weekdays and weekend
+weekend <- pattern[which(pattern$day.type == "weekend"),] %>% group_by(day.type) %>% summarise(Steps = sum(steps))
+weekday <- activity.data[which(activity.data$day.type == "weekday"),]
