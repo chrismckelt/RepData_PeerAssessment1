@@ -63,7 +63,7 @@ strategy <- function(x) { ifelse(is.na(x), mean.daily.steps, x) }
     
 activity.data.no.na <- as.data.frame(lapply(activity.data, FUN = strategy))
 
-#repeat first part of assignment using non NA valued data
+#repeat first part of assignment using non NA valued datamax.steps
 #Calculate the total number of steps taken per day
 total.steps.no.na <- tapply(activity.data.no.na$steps, activity.data.no.na$date, FUN = sum, na.rm = TRUE)
 daily.steps.no.na <- total.steps.no.na %>% group_by(date) %>% summarise(Steps = sum(steps))

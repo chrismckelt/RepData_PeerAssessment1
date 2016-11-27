@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>Reproducible Research: Peer Assessment 1</title>
+
+<script type="text/javascript">
+window.onload = function() {
+  var imgs = document.getElementsByTagName('img'), i, img;
+  for (i = 0; i < imgs.length; i++) {
+    img = imgs[i];
+    // center an image if it is the only element of its parent
+    if (img.parentElement.childElementCount === 1)
+      img.parentElement.style.textAlign = 'center';
+  }
+};
+</script>
+
+
+
+
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 13px;
+}
+
+body {
+  max-width: 800px;
+  margin: auto;
+  padding: 1em;
+  line-height: 20px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 {
+   font-size:2.2em;
+}
+
+h2 {
+   font-size:1.8em;
+}
+
+h3 {
+   font-size:1.4em;
+}
+
+h4 {
+   font-size:1.0em;
+}
+
+h5 {
+   font-size:0.9em;
+}
+
+h6 {
+   font-size:0.8em;
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre, img {
+  max-width: 100%;
+}
+pre {
+  overflow-x: auto;
+}
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code {
+  font-size: 92%;
+  border: 1px solid #ccc;
+}
+
+code[class] {
+  background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * {
+      background: transparent !important;
+      color: black !important;
+      filter:none !important;
+      -ms-filter: none !important;
+   }
+
+   body {
+      font-size:12pt;
+      max-width:100%;
+   }
+
+   a, a:visited {
+      text-decoration: underline;
+   }
+
+   hr {
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote {
+      padding-right: 1em;
+      page-break-inside: avoid;
+   }
+
+   tr, img {
+      page-break-inside: avoid;
+   }
+
+   img {
+      max-width: 100% !important;
+   }
+
+   @page :left {
+      margin: 15mm 20mm 15mm 10mm;
+   }
+
+   @page :right {
+      margin: 15mm 10mm 15mm 20mm;
+   }
+
+   p, h2, h3 {
+      orphans: 3; widows: 3;
+   }
+
+   h2, h3 {
+      page-break-after: avoid;
+   }
+}
+</style>
+
+
+
+</head>
+
+<body>
+<h1>Reproducible Research: Peer Assessment 1</h1>
+
+<h1>Code for reading in the dataset and/or processing the data</h1>
+
+<p>#####&ldquo;r
+library(dplyr)
+library(ggplot2)
+library(timeDate)</p>
+
+<p>rm(list = ls()) # clear vars
+setwd(&quot;C:\dev\RepData_PeerAssessment1\&rdquo;)</p>
+
+<p>activity.data &lt;- read.csv(unz(&ldquo;activity.zip&rdquo;, &ldquo;activity.csv&rdquo;), colClasses = c(&ldquo;integer&rdquo;, &ldquo;Date&rdquo;, &ldquo;integer&rdquo;))
+activity.data$date &lt;- as.POSIXct(activity.data$date)
+#####&ldquo;</p>
+
+<h1>Calculate the total number of steps taken per day</h1>
+
+<p>#####<code>r
+total.steps &lt;- tapply(activity.data$steps, activity.data$date, FUN = sum, na.rm = TRUE)
+daily.steps &lt;- activity.data %&gt;% group_by(date) %&gt;% summarise(Steps = sum(steps))
+names(daily.steps) &lt;- c(&quot;Date&quot;, &quot;steps&quot;)
+#####</code></p>
+
+<h1>Mean and median number of steps taken each days</h1>
+
+<p>#####<code>r
+mean.daily.steps &lt;- mean(total.steps, na.rm = TRUE)
+median.daily.steps &lt;- median(total.steps, na.rm = TRUE)
+#####</code></p>
+
+<h2>mean.daily.steps:9354.2295082</h2>
+
+<h2>median.daily.steps:10395</h2>
+
+<h1>Histogram of the total number of steps taken each day</h1>
+
+<p>#####<code>r
+hist(daily.steps$steps, breaks = 11,
+     xlab = &quot;number of steps per day&quot;,
+     main = &quot;Histogram of total steps per day&quot;)
+abline(v = mean.daily.steps, col = &quot;red&quot;, lwd = 1)
+abline(v = median.daily.steps, col = &quot;blue&quot;, lwd = 1)
+legend(x = &quot;topright&quot;, legend = c(&quot;mean&quot;, &quot;median&quot;), col = c(&quot;red&quot;, &quot;blue&quot;), bty = &quot;n&quot;, lwd = 3)
+#####</code></p>
+
+<h2>What is the average daily activity pattern?</h2>
+
+<p>#####<code>r
+activity.interval &lt;- activity.data %&gt;% group_by(interval) %&gt;% summarise(mean_steps = mean(steps, na.rm = TRUE))
+#####</code></p>
+
+<p>#Time series plot of the average number of steps taken
+#####<code>r
+activity.interval.plot &lt;- ggplot(data = activity.interval, mapping = aes(x = interval, y = mean_steps)) +
+    geom_line() + scale_x_continuous(&quot;Day Interval&quot;, breaks = seq(min(activity.interval$interval),
+    max(activity.interval$interval), 100)) + scale_y_continuous(&quot;Average Number of Steps&quot;) +
+ggtitle(&quot;Average Number of Steps Taken by Interval&quot;)
+activity.interval.plot
+#####</code></p>
+
+<p>#The 5-minute interval that, on average, contains the maximum number of steps</p>
+
+<p>#####<code>r
+max.steps = activity.interval[which.max(activity.interval$mean_steps),]
+#max.steps:835, 206.1698113
+#####</code></p>
+
+<h3>Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)</h3>
+
+<p>#####&rdquo;r
+present.days &lt;- na.omit(activity.data$steps)
+missing.days &lt;- length(activity.data$steps) - length(present.days)</p>
+
+<h1>strategy for filling in missing data (just replace with mean)</h1>
+
+<p>activity.data$steps[is.na(activity.data$steps)] &lt;- mean.daily.steps</p>
+
+<h1>create a new dataset that is equal to the original dataset but with the missing data filled in.</h1>
+
+<p>strategy &lt;- function(x) { ifelse(is.na(x), mean.daily.steps, x) }<br/>
+activity.data.no.na &lt;- as.data.frame(lapply(activity.data, FUN = strategy))
+#####&ldquo;</p>
+
+<h1>repeat first part of assignment using non NA valued data</h1>
+
+<h1>Calculate the total number of steps taken per day</h1>
+
+<p>#####<code>r
+total.steps.no.na &lt;- tapply(activity.data.no.na$steps, activity.data.no.na$date, FUN = sum, na.rm = TRUE)
+#daily.steps.no.na &lt;- as.data.frame(total.steps.no.na) %&gt;% group_by(date) %&gt;% summarise(Steps = sum(steps))
+names(total.steps.no.na) &lt;- c(&quot;Date&quot;, &quot;steps&quot;)
+#####</code></p>
+
+<h1>Calculate and report the mean and median of the total number of steps taken per day</h1>
+
+<p>#####<code>r
+mean.daily.steps.no.na &lt;- mean(total.steps.no.na, na.rm = TRUE)
+median.daily.steps.no.na &lt;- median(total.steps.no.na, na.rm = TRUE)
+#####</code></p>
+
+<h1>Histogram of the total number of steps taken each day after missing values are imputed</h1>
+
+<p>#####<code>r
+hist(total.steps.no.na, breaks = 11,
+    xlab = &quot;number of steps per day 2&quot;,
+    main = &quot;Histogram of total steps per day 2&quot;)
+    abline(v = total.steps.no.na, col = &quot;red&quot;, lwd = 1)
+    abline(v = median.daily.steps.no.na, col = &quot;blue&quot;, lwd = 1)
+    legend(x = &quot;topright&quot;, legend = c(&quot;mean&quot;, &quot;median&quot;), col = c(&quot;red&quot;, &quot;blue&quot;), bty = &quot;n&quot;, lwd = 3)
+#####</code></p>
+
+<p>#Panel plot comparing the average number of steps taken per 5-minute interval across weekdays and weekends
+#<a href="https://cran.r-project.org/web/packages/timeDate/index.html">https://cran.r-project.org/web/packages/timeDate/index.html</a></p>
+
+<p>#####<code>r
+activity.data$day.type &lt;- &quot;weekday&quot;
+activity.data$day.type[isWeekend(activity.data$date)] &lt;- &quot;weekend&quot;
+activity.data$day.type &lt;- as.factor(activity.data$day.type)
+#####</code></p>
+
+<h1>Make a panel plot containing a time series plot (i.e. type = &quot;l&rdquo;) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis).</h1>
+
+<p>#####<code>r
+pattern &lt;- aggregate(steps ~ interval + day.type, data = activity.data, mean)
+library(lattice)
+xyplot(steps ~ interval | day.type, pattern, type = &quot;l&quot;, layout = c(1, 2), xlab = &quot;Interval&quot;, ylab = &quot;Number of steps&quot;)
+#####</code></p>
+
+<h2>Calculate average steps of each 5-minutes interval for weekdays and weekend</h2>
+
+<p>#####<code>r
+weekend &lt;- pattern[which(pattern$day.type == &quot;weekend&quot;),] %&gt;% group_by(day.type) %&gt;% summarise(Steps = sum(steps))
+weekday &lt;- activity.data[which(activity.data$day.type == &quot;weekday&quot;),]
+#####</code></p>
+
+<h4>output html</h4>
+
+<p>library(knitr)
+library(markdown)
+rmd &lt;- file.path(getwd(), &ldquo;PA1_template.r&rdquo;)
+knit(rmd, output = &ldquo;PA1_template.md&rdquo;, encoding = &ldquo;ISO8859-1&rdquo;, quiet = FALSE)
+markdownToHTML(&ldquo;PA1_template.md&rdquo;, &ldquo;PA1_template.html&rdquo;)</p>
+
+</body>
+
+</html>
