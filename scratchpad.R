@@ -3,7 +3,7 @@ library(ggplot2)
 
 
 ## Loading and preprocessing the data
-
+#1. Code for reading in the dataset and/or processing the data
 rm(list = ls()) # clear vars
 setwd("C:\\dev\\RepData_PeerAssessment1\\")
 
@@ -26,6 +26,7 @@ median.daily.steps <- median(total.steps, na.rm = TRUE)
 #median.daily.steps:`r median.daily.steps` 
 
 #Make a histogram of the total number of steps taken each day
+#2. Histogram of the total number of steps taken each day
 hist(daily.steps$steps, breaks = 11,
      xlab = "number of steps per day",
      main = "Histogram of total steps per day")
