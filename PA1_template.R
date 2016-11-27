@@ -128,6 +128,6 @@ weekday <- activity.data[which(activity.data$day.type == "weekday"),]
 #### output html
 library(knitr)
 library(markdown)
-rmd <- file.path(getwd(), "PA1_template.r")
-knit(rmd, output = "PA1_template.md", encoding = "ISO8859-1", quiet = FALSE)
+#rmd <- file.path(getwd(), "PA1_template.r")
+#knit(rmd, output = "PA1_template.md", encoding = "ISO8859-1", quiet = FALSE)
 markdownToHTML("PA1_template.md", "PA1_template.html")
