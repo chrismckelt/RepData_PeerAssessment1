@@ -23,8 +23,8 @@ total.steps <- tapply(activity.data$steps, activity.data$date, FUN = sum, na.rm 
 mean.daily.steps <- mean(total.steps, na.rm = TRUE)
 median.daily.steps <- median(total.steps, na.rm = TRUE)
 
-## mean.daily.steps:`r mean.daily.steps`
-## median.daily.steps:`r median.daily.steps`
+## mean.daily.steps:3.6266808 &times; 10<sup>5</sup>
+## median.daily.steps:1.1458 &times; 10<sup>4</sup>
 
 # Histogram of the total number of steps taken each day
 ## ------------------------------------------------------------------------
@@ -55,7 +55,7 @@ activity.interval.plot
 
 ## ------------------------------------------------------------------------
 max.steps = activity.interval[which.max(activity.interval$mean_steps),]
-#max.steps:`r max.steps`
+#max.steps:835, 206.1698113
 
 
 # Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
